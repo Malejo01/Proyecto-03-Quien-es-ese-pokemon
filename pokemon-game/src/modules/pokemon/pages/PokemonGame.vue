@@ -6,11 +6,11 @@
 
   <section v-else class="flex flex-col justify-center items-center w-screen h-screen">
     <h1 class="text-3xl font-bold m-2">¿Quien es este pokemon?</h1>
-    <h3>{{ randomPokemon?.name }}</h3>
+    <h3 class="capitalize">{{ randomPokemon?.name }}</h3>
     <PokemonPicture :pokemon-id="randomPokemon?.id" :show-pokemon="gameStatus !== GameStatus.Playing"/>
 
 
-    <PokemonOptions :options="options" @selected-option="onSelectedOption"/>
+    <PokemonOptions :options="options" @selectedOption="onSelectedOption"/>
   </section>
 </template>
 
@@ -22,8 +22,9 @@ import { GameStatus } from '../interfaces';
 
 const { randomPokemon, isLoading, gameStatus, pokemonOptions:options } = usePokemonGame();
 
-const onSelectedOption = (id?: number) => {
-  console.log({id});
+const onSelectedOption = (id: number) => {
+  console.log('Opcion seleccionada:', id);
 };
+
 
 </script>

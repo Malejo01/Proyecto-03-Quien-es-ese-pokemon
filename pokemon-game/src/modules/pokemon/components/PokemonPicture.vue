@@ -1,9 +1,9 @@
 <template>
   <section>
     <img
-      v-if="!props.showPokemon"
-      alt="Pokemon Picture"
+      v-if="!showPokemon"
       :src="pokemonImagen"
+      alt="Pokemon Picture"
       class="brightness-0 h-[200px] w-[200px]"
     />
     <img
@@ -19,7 +19,7 @@
 import { computed } from 'vue';
 
 interface Props {
-  pokemonId: number | undefined;
+  pokemonId: number;
   showPokemon?: boolean;
 }
 
