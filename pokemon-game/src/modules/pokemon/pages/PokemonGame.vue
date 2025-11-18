@@ -6,7 +6,7 @@
 
   <section v-else class="flex flex-col justify-center items-center w-screen h-screen">
     <h1 class="text-3xl font-bold m-2">¿Quien es este pokemon?</h1>
-    <h3 class="capitalize">{{ randomPokemon?.name }}</h3>
+    <h3 class="capitalize">{{ gameStatus }}</h3>
     <PokemonPicture :pokemon-id="randomPokemon?.id" :show-pokemon="gameStatus !== GameStatus.Playing"/>
 
 
@@ -20,11 +20,10 @@ import PokemonOptions from '../components/PokemonOptions.vue';
 import { usePokemonGame } from '../composables/UsePokemonGame';
 import { GameStatus } from '../interfaces';
 
-const { randomPokemon, isLoading, gameStatus, pokemonOptions:options } = usePokemonGame();
+const { randomPokemon, isLoading, gameStatus, pokemonOptions:options, checkanswer } = usePokemonGame();
 
 const onSelectedOption = (id: number) => {
-  console.log('Opcion seleccionada:', id);
-};
-
+  checkanswer(id);
+}
 
 </script>
