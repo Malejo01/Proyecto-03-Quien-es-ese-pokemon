@@ -59,7 +59,7 @@ export const usePokemonGame = () => {
     const allPokemons = await getPokemons(newLimit);
 
     // Get only the new Pokémon (from the previous limit to the new limit)
-    const newPokemons = allPokemons.filter(p => p.id > totalPokemonsLoaded.value);
+    const newPokemons = allPokemons.filter((p) => p.id > totalPokemonsLoaded.value);
 
     // Add new Pokémon to the existing pool
     pokemons.value = [...pokemons.value, ...newPokemons];
@@ -83,11 +83,11 @@ export const usePokemonGame = () => {
     pokemons.value = pokemons.value.slice(howMany);
   };
 
-  function randomInRange(min:number, max:number) {
+  function randomInRange(min: number, max: number) {
     return Math.random() * (max - min) + min;
   }
 
-  const checkanswer = (id:number) => {
+  const checkanswer = (id: number) => {
     const hasWon = randomPokemon.value?.id === id;
 
     if (hasWon) {
@@ -111,6 +111,7 @@ export const usePokemonGame = () => {
 
     if (lives.value === 0) {
       isGameOver.value = true;
+      audioControls.playGameOverSound();
     }
   };
 
@@ -133,8 +134,13 @@ export const usePokemonGame = () => {
   };
 
   onMounted(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Step 1: Preload all audio files first
+    await audioControls.preloadAllAudio();
+
+    // Step 2: Load Pokémon data
     pokemons.value = await getPokemons(151);
+
+    // Step 3: Start background music and game
     audioControls.playBackgroundMusic();
     getNextRound();
 
@@ -162,5 +168,3 @@ export const usePokemonGame = () => {
     pokemonOptions,
   };
 };
-
-
