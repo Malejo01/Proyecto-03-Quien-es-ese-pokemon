@@ -14,14 +14,36 @@
     "></div>
 
     <!-- Header -->
-    <div class="bg-red-600 text-white py-4 md:py-6 px-2 md:px-4 text-center rounded-b-3xl shadow-2xl relative z-10">
-      <h1 class="text-sm md:text-2xl font-black tracking-wider px-4 md:px-0" style="
+    <div class="bg-red-600 text-white pt-6 pb-7 md:py-6 px-2 md:px-4 text-center rounded-b-3xl shadow-2xl relative z-10">
+      <button
+        class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white text-red-600 px-3 md:px-4 py-2 rounded-full font-bold transition-all shadow-md"
+      >
+        <img
+          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+          alt="Pokeball"
+          class="inline-block shrink-0 w-5 h-5 md:w-8 md:h-8 object-contain"
+        />
+      </button>
+      <h1 class="text-3xl md:text-4xl font-black tracking-wider px-4 md:px-0 text-center" style="
         font-family: 'Arial Black', 'Arial Bold', sans-serif;
-        text-shadow: 3px 3px 0px rgba(0,0,0,0.4), -2px -2px 0px #ffcb05;
-        letter-spacing: 2px;
+        color: #FFD700;
+        text-shadow:
+          4px 4px 0px #1a1a2e,
+          -2px -2px 0px rgba(255, 203, 5, 0.5),
+          3px 3px 8px rgba(0, 0, 0, 0.4);
+        letter-spacing: 3px;
       ">
         ¿QUIÉN ES ESE POKÉMON?
       </h1>
+      <button
+        class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white text-red-600 px-3 md:px-4 py-2 rounded-full font-bold transition-all shadow-md"
+      >
+        <img
+          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+          alt="Pokeball"
+          class="inline-block shrink-0 w-5 h-5 md:w-8 md:h-8 object-contain"
+        />
+      </button>
     </div>
 
     <!-- Audio Control Button (Bottom Right) -->
@@ -86,67 +108,55 @@
     </div>
 
     <!-- Main Content - Centered Difficulty Selection -->
-    <div class="flex flex-col justify-center items-center flex-1 px-4 py-8 relative z-10">
-      <!-- Pokémon Title -->
-      <h2 class="text-5xl md:text-8xl font-black mb-12 text-center transform drop-shadow-lg" style="
-        font-family: 'Arial Black', 'Arial Bold', sans-serif;
-        color: #FFD700;
-        text-shadow:
-          4px 4px 0px #1a1a2e,
-          -2px -2px 0px rgba(255, 203, 5, 0.5),
-          3px 3px 8px rgba(0, 0, 0, 0.4);
-        letter-spacing: 3px;
-      ">
-        POKÉMON
-      </h2>
+    <div class="flex flex-col justify-center items-center flex-1 px-0 pt-5 md:pt-8 relative z-10 overflow-y-auto h-full w-full">
 
       <!-- Difficulty Options -->
-      <div class="w-full max-w-2xl space-y-4">
+      <div class="w-full max-w-xl grid grid-cols-1 gap-3 md:gap-4">
         <!-- Easy - Bulbasaur -->
         <button
           @click="selectDifficulty('Easy')"
-          class="w-full px-6 py-5 text-left text-white hover:scale-105 bg-gradient-to-r from-green-500 to-green-600 font-bold cursor-pointer transition-all flex items-center gap-4 text-lg rounded-2xl shadow-xl border-4 border-green-700 hover:shadow-2xl"
+          class="w-full px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-5 text-white hover:scale-105 bg-gradient-to-r from-green-500 to-green-600 font-bold cursor-pointer transition-all flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-4 text-center rounded-2xl shadow-xl border-4 border-green-700 hover:shadow-2xl"
         >
-          <span class="text-5xl">🌱</span>
-          <div>
-            <div class="font-black text-2xl drop-shadow-lg">Easy</div>
-            <div class="text-sm text-green-100">4 opciones • 2 pts</div>
+          <span class="text-3xl sm:text-4xl md:text-5xl">🌱</span>
+          <div class="w-full">
+            <div class="font-black text-lg sm:text-xl md:text-2xl drop-shadow-lg">Facil</div>
+            <div class="text-sm md:text-base text-green-100">4 opciones • 2 pts</div>
           </div>
         </button>
 
         <!-- Normal - Pokéball -->
         <button
           @click="selectDifficulty('Normal')"
-          class="w-full px-6 py-5 text-left text-white hover:scale-105 bg-gradient-to-r from-yellow-500 to-yellow-600 font-bold cursor-pointer transition-all flex items-center gap-4 text-lg rounded-2xl shadow-xl border-4 border-yellow-700 hover:shadow-2xl"
+          class="w-full px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-5 text-white hover:scale-105 bg-gradient-to-r from-yellow-500 to-yellow-600 font-bold cursor-pointer transition-all flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-4 text-center rounded-2xl shadow-xl border-4 border-yellow-700 hover:shadow-2xl"
         >
-          <span class="text-5xl">⚡</span>
-          <div>
-            <div class="font-black text-2xl drop-shadow-lg">Normal</div>
-            <div class="text-sm text-yellow-100">6 opciones • 3 pts</div>
+          <span class="text-3xl sm:text-4xl md:text-5xl">⚡</span>
+          <div class="w-full">
+            <div class="font-black text-lg sm:text-xl md:text-2xl drop-shadow-lg">Normal</div>
+            <div class="text-sm md:text-base text-yellow-100">6 opciones • 3 pts</div>
           </div>
         </button>
 
         <!-- Hard - Charizard/Fire -->
         <button
           @click="selectDifficulty('Hard')"
-          class="w-full px-6 py-5 text-left text-white hover:scale-105 bg-gradient-to-r from-red-500 to-red-600 font-bold cursor-pointer transition-all flex items-center gap-4 text-lg rounded-2xl shadow-xl border-4 border-red-700 hover:shadow-2xl"
+          class="w-full px-4 md:px-6 py-3 md:py-5 text-white hover:scale-105 bg-gradient-to-r from-red-500 to-red-600 font-bold cursor-pointer transition-all flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-4 text-center rounded-2xl shadow-xl border-4 border-red-700 hover:shadow-2xl"
         >
-          <span class="text-5xl">🔥</span>
-          <div>
-            <div class="font-black text-2xl drop-shadow-lg">Hard</div>
-            <div class="text-sm text-red-100">8 opciones • 4 pts</div>
+          <span class="text-4xl md:text-5xl">🔥</span>
+          <div class="w-full">
+            <div class="font-black text-xl md:text-2xl drop-shadow-lg">Dificil</div>
+            <div class="text-sm md:text-base text-red-100">8 opciones • 4 pts</div>
           </div>
         </button>
 
-        <!-- Extreme - Stressed Girl -->
+        <!-- Extreme - Smiling Devil -->
         <button
           @click="selectDifficulty('Extreme')"
-          class="w-full px-6 py-5 text-left text-white hover:scale-105 bg-gradient-to-r from-purple-600 to-pink-600 font-bold cursor-pointer transition-all flex items-center gap-4 text-lg rounded-2xl shadow-xl border-4 border-purple-800 hover:shadow-2xl"
+          class="w-full px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-5 text-white hover:scale-105 bg-gradient-to-r from-purple-600 to-pink-600 font-bold cursor-pointer transition-all flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-4 text-center rounded-2xl shadow-xl border-4 border-purple-800 hover:shadow-2xl"
         >
-          <span class="text-5xl animate-bounce">😭</span>
-          <div>
-            <div class="font-black text-2xl drop-shadow-lg">Modo Jesy (Extreme)</div>
-            <div class="text-sm text-purple-100">Escribe el nombre • 10 pts + streak</div>
+          <span class="text-3xl sm:text-4xl md:text-5xl animate-bounce">😈</span>
+          <div class="w-full">
+            <div class="font-black text-lg sm:text-xl md:text-2xl drop-shadow-lg">Extremo (Modo Jesy)</div>
+            <div class="text-sm md:text-base text-purple-100">Escribe el nombre • 10 pts + streak</div>
           </div>
         </button>
       </div>

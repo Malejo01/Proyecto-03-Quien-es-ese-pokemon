@@ -15,71 +15,30 @@
 
     <!-- Pokemon Header -->
     <div class="bg-red-600 text-white py-4 md:py-6 px-2 md:px-4 text-center rounded shadow-lg relative z-10">
-      <!-- New Game Button -->
+      <!-- New Game Button (always shows icon and text) -->
       <button
         @click="confirmReset"
-        class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white text-red-600 px-2 md:px-4 py-2 rounded-full font-bold hover:bg-red-100 transition-all shadow-md cursor-pointer"
+        class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-white text-red-600 px-3 md:px-4 py-2 rounded-full font-bold hover:bg-red-100 transition-all shadow-md cursor-pointer"
       >
         <img
           src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
           alt="Pokeball"
-          class="w-6 h-6 md:w-8 md:h-8"
+          class="inline-block shrink-0 w-5 h-5 md:w-8 md:h-8 object-contain"
         />
-        <span class="hidden md:inline">New Game</span>
+        <span class="hidden md:inline text-sm md:text-base">Menú</span>
       </button>
 
-      <!-- Difficulty Menu Button -->
-      <div class="absolute right-2 md:left-48 md:right-auto top-1/2 -translate-y-1/2">
-        <button
-          @click="showDifficultyMenu = !showDifficultyMenu"
-          class="flex items-center gap-2 bg-white text-red-600 px-2 md:px-4 py-2 rounded-full font-bold hover:bg-red-100 transition-all shadow-md cursor-pointer"
-        >
-          <!-- Hamburger Icon -->
-          <div class="flex flex-col gap-1">
-            <div class="w-4 md:w-5 h-0.5 bg-red-600"></div>
-            <div class="w-4 md:w-5 h-0.5 bg-red-600"></div>
-            <div class="w-4 md:w-5 h-0.5 bg-red-600"></div>
-          </div>
-          <span class="hidden md:inline">Elegir dificultad</span>
-        </button>
+      <!-- Difficulty selector removed from header (menu handled on main MenuPage) -->
 
-        <!-- Difficulty Dropdown Menu -->
-        <div
-          v-if="showDifficultyMenu"
-          class="absolute top-full mt-2 bg-white rounded-lg shadow-xl overflow-hidden z-10 min-w-max right-0 md:left-0 md:right-auto"
-        >
-          <button
-            @click="confirmDifficultyChange('Easy')"
-            class="w-full px-4 md:px-6 py-2 md:py-3 text-left text-green-700 hover:bg-green-100 font-semibold cursor-pointer transition-colors flex items-center gap-2 text-sm md:text-base"
-          >
-            <span class="text-xl md:text-2xl">😊</span>
-            <span>Easy (4 opciones)</span>
-          </button>
-          <button
-            @click="confirmDifficultyChange('Normal')"
-            class="w-full px-4 md:px-6 py-2 md:py-3 text-left text-yellow-700 hover:bg-yellow-100 font-semibold cursor-pointer transition-colors flex items-center gap-2 text-sm md:text-base"
-          >
-            <span class="text-xl md:text-2xl">😐</span>
-            <span>Normal (6 opciones)</span>
-          </button>
-          <button
-            @click="confirmDifficultyChange('Hard')"
-            class="w-full px-4 md:px-6 py-2 md:py-3 text-left text-red-700 hover:bg-red-100 font-semibold cursor-pointer transition-colors flex items-center gap-2 text-sm md:text-base"
-          >
-            <span class="text-xl md:text-2xl">😰</span>
-            <span>Hard (8 opciones)</span>
-          </button>
-          <button
-            @click="confirmDifficultyChange('Extreme')"
-            class="w-full px-4 md:px-6 py-2 md:py-3 text-left text-purple-700 hover:bg-purple-100 font-semibold cursor-pointer transition-colors flex items-center gap-2 text-sm md:text-base"
-          >
-            <span class="text-xl md:text-2xl">⚡</span>
-            <span>Extreme (Input)</span>
-          </button>
-        </div>
-      </div>
-
-      <h1 class="text-xl md:text-4xl font-black tracking-wider px-12 md:px-0" style="font-family: 'Arial Black', 'Arial Bold', sans-serif; text-shadow: 2px 2px 0px rgba(0,0,0,0.3), -1px -1px 0px #ffcb05;">
+      <h1 class="text-xl md:text-4xl font-black tracking-wider px-4 md:px-0 text-center" style="
+        font-family: 'Arial Black', 'Arial Bold', sans-serif;
+        color: #FFD700;
+        text-shadow:
+          4px 4px 0px #1a1a2e,
+          -2px -2px 0px rgba(255, 203, 5, 0.5),
+          3px 3px 8px rgba(0, 0, 0, 0.4);
+        letter-spacing: 3px;
+      ">
         ¿QUIÉN ES ESE POKÉMON?
       </h1>
     </div>
