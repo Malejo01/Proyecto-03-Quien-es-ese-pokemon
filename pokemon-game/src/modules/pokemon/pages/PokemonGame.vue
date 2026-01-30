@@ -56,6 +56,13 @@
             <span class="text-xl md:text-2xl">😰</span>
             <span>Hard (8 opciones)</span>
           </button>
+          <button
+            @click="confirmDifficultyChange('Extreme')"
+            class="w-full px-4 md:px-6 py-2 md:py-3 text-left text-purple-700 hover:bg-purple-100 font-semibold cursor-pointer transition-colors flex items-center gap-2 text-sm md:text-base"
+          >
+            <span class="text-xl md:text-2xl">⚡</span>
+            <span>Extreme (Input)</span>
+          </button>
         </div>
       </div>
 
@@ -178,35 +185,95 @@
       <div class="mb-3 md:mb-4 px-3 md:px-4 py-1 md:py-2 rounded-lg font-bold text-sm md:text-base" :class="{
         'bg-green-200 text-green-800': difficulty === 'Easy',
         'bg-yellow-200 text-yellow-800': difficulty === 'Normal',
-        'bg-red-200 text-red-800': difficulty === 'Hard'
+        'bg-red-200 text-red-800': difficulty === 'Hard',
+        'bg-purple-200 text-purple-800': difficulty === 'Extreme'
       }">
         {{ difficulty }} - Ronda {{ roundsPlayed }}
       </div>
 
       <!-- Score and Lives Display -->
       <div class="mb-3 md:mb-4 flex gap-2 md:gap-4 items-center flex-wrap justify-center">
-        <div class="px-3 md:px-4 py-1 md:py-2 bg-blue-100 text-blue-800 rounded-lg font-bold text-sm md:text-lg">
+        <div class="px-3 md:px-4 py-1 md:py-2 bg-blue-100 text-blue-800 rounded-lg font-bold text-sm md:text-lg flex items-center gap-2">
           🏆 Puntuación: {{ score }}
+          <span v-if="difficulty === 'Extreme' && correctAnswerStreak >= 2" class="text-lg md:text-xl">🔥</span>
         </div>
         <div class="px-3 md:px-4 py-1 md:py-2 bg-pink-100 text-pink-800 rounded-lg font-semibold flex items-center gap-2 text-sm md:text-base">
           <span class="font-bold">Vidas:</span>
-          <span class="text-xl md:text-2xl">{{ '❤️'.repeat(lives) }}</span>
+          <div class="flex gap-1">
+            <span v-for="(heart, index) in Array(lives).fill('❤️')" :key="index"
+              :class="['text-xl md:text-2xl', { 'animate-shake': animatingHeartIndex === index }]">
+              {{ heart }}
+            </span>
+          </div>
         </div>
       </div>
 
       <div class="h-16 md:h-20 mb-2 md:mb-0">
-        <button v-if="gameStatus !== GameStatus.Playing && !isGameOver" @click="getNextRound()" class="bg-green-500 shadow-md p-2 md:p-3 text-white rounded cursor-pointer hover:bg-green-700 w-32 md:w-40 text-center transition-all text-sm md:text-base">
+        <button v-if="gameStatus !== GameStatus.Playing && !isGameOver" @click="handleNextRound()" class="bg-green-500 shadow-md p-2 md:p-3 text-white rounded cursor-pointer hover:bg-green-700 w-32 md:w-40 text-center transition-all text-sm md:text-base">
           Siguiente
         </button>
       </div>
+
+      <!-- Result Messages - Extreme mode only, above pokemon image -->
+      <div v-if="difficulty === 'Extreme' && lastResult" class="w-full flex justify-center mt-4 mb-4">
+        <div class="w-full max-w-md px-4">
+          <p v-if="lastResult.type === 'ok'" class="text-2xl md:text-3xl font-bold text-green-600 text-center mb-2">
+            ¡Correcto!
+          </p>
+          <p v-if="lastResult.type === 'almost'" class="text-2xl md:text-3xl font-bold text-orange-500 text-center mb-2">
+            ¡¡ Casi !!
+          </p>
+          <p v-if="lastResult.type === 'wrong'" class="text-2xl md:text-3xl font-bold text-red-600 text-center mb-2">
+            💔 Incorrecto
+          </p>
+
+          <p class="text-lg md:text-xl text-gray-700 text-center capitalize mb-2">
+            {{ lastResult.correctName }}
+          </p>
+
+          <p v-if="lastResult.type === 'almost'" class="text-lg md:text-xl font-semibold text-orange-600 text-center">
+            Puntos: {{ lastResult.points }}
+          </p>
+        </div>
+      </div>
+
       <PokemonPicture :pokemon-id="randomPokemon?.id" :show-pokemon="gameStatus !== GameStatus.Playing"/>
 
-      <PokemonOptions
-        :options="options"
-        :block-selection="gameStatus !== GameStatus.Playing"
-        :correct-answer="randomPokemon?.id"
-        @selectedOption="onSelectedOption"
-      />
+      <!-- If Extreme difficulty, show a name input instead of option buttons -->
+      <template v-if="difficulty === 'Extreme'">
+        <div class="w-full flex justify-center mt-4">
+          <div class="w-full max-w-md px-4">
+            <!-- Show input only when not displaying a result -->
+            <input
+              v-if="!lastResult"
+              v-model="answer"
+              @keydown.enter.prevent="submitName"
+              :disabled="gameStatus === GameStatus.Playing ? false : true"
+              placeholder="Escribe el nombre del Pokémon"
+              class="w-full p-3 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-red-400 text-center text-sm md:text-base"
+            />
+            <p v-if="validationError" class="text-sm text-red-600 mt-2 text-center">{{ validationError }}</p>
+
+            <!-- Show "Enviar" button only when not displaying a result -->
+            <div v-if="!lastResult" class="flex justify-center mt-3">
+              <button
+                @click="submitName"
+                class="bg-blue-500 text-white px-5 py-2 rounded-md hover:bg-blue-600 transition-all"
+              >
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <PokemonOptions
+          :options="options"
+          :block-selection="gameStatus !== GameStatus.Playing"
+          :correct-answer="randomPokemon?.id"
+          @selectedOption="onSelectedOption"
+        />
+      </template>
     </section>
   </div>
 </template>
@@ -229,6 +296,7 @@ const {
   gameStatus,
   pokemonOptions:options,
   checkanswer,
+  checkAnswerByName,
   getNextRound,
   difficulty,
   roundsPlayed,
@@ -238,7 +306,57 @@ const {
   resetGame,
   setDifficulty,
   audioControls,
+  correctAnswerStreak,
 } = usePokemonGame();
+
+const answer = ref('');
+const validationError = ref('');
+const lastResult = ref(null);
+const animatingHeartIndex = ref<number | null>(null);
+
+const handleNextRound = () => {
+  lastResult.value = null;
+  getNextRound();
+}
+
+const submitName = () => {
+  validationError.value = '';
+  lastResult.value = null;
+  const trimmed = (answer.value || '').trim();
+  if (!trimmed) {
+    validationError.value = 'Ingresa un nombre válido';
+    return;
+  }
+  // Only allow letters, numbers and spaces
+  if (!/^[a-zA-Z0-9\s]+$/.test(trimmed)) {
+    validationError.value = 'No se permiten caracteres especiales';
+    return;
+  }
+
+  const res = checkAnswerByName(trimmed);
+  if (res?.ok) {
+    // clear input and prepare for reveal/next
+    answer.value = '';
+    validationError.value = '';
+    lastResult.value = { type: 'ok', correctName: res.correctName };
+  } else if (res?.almost) {
+    answer.value = '';
+    validationError.value = '';
+    lastResult.value = { type: 'almost', points: res.pointsAwarded, correctName: res.correctName };
+  } else if (res?.reason === 'invalid-chars') {
+    validationError.value = 'No se permiten caracteres especiales';
+    lastResult.value = null;
+  } else {
+    validationError.value = '';
+    lastResult.value = { type: 'wrong', correctName: res?.correctName };
+    // Trigger heart shake animation on wrong answer
+    const heartIndexToRemove = lives.value; // Get current lives after decrement
+    animatingHeartIndex.value = Math.max(0, heartIndexToRemove - 1);
+    setTimeout(() => {
+      animatingHeartIndex.value = null;
+    }, 2000);
+  }
+}
 
 const onSelectedOption = (id: number) => {
   checkanswer(id);
@@ -278,3 +396,15 @@ const handleCancel = () => {
   showConfirmModal.value = false;
 }
 </script>
+
+<style scoped>
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 2s ease-in-out;
+}
+</style>

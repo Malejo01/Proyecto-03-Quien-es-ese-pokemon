@@ -15,6 +15,7 @@ export const usePokemonGame = () => {
   const score = ref<number>(0);
   const isGameOver = ref<boolean>(false);
   const totalPokemonsLoaded = ref<number>(151);
+  const correctAnswerStreak = ref<number>(0);
 
   const audioControls = useAudio();
 
@@ -33,14 +34,19 @@ export const usePokemonGame = () => {
     const diff = difficulty.value;
     if (diff === 'Easy') return 4;
     if (diff === 'Normal') return 6;
-    return 8; // Hard
+    if (diff === 'Hard') return 8; // Hard
+    // Extreme mode uses a single pokemon and a text input
+    if (diff === 'Extreme') return 1;
+    return 8;
   });
 
   const pointsPerCorrectAnswer = computed(() => {
     const diff = difficulty.value;
     if (diff === 'Easy') return 2;
     if (diff === 'Normal') return 3;
-    return 4; // Hard
+    if (diff === 'Hard') return 4; // Hard
+    if (diff === 'Extreme') return 10; // Extreme
+    return 4;
   });
 
   const getPokemons = async (limit: number = 151): Promise<Pokemon[]> => {
@@ -115,6 +121,96 @@ export const usePokemonGame = () => {
     }
   };
 
+  /**
+   * Check answer by name for Extreme mode.
+   * Returns an object with { ok: boolean, reason?: string }
+   */
+  const levenshtein = (a: string, b: string) => {
+    const an = a.length;
+    const bn = b.length;
+    if (an === 0) return bn;
+    if (bn === 0) return an;
+    const row = new Array(bn + 1).fill(0).map((_, i) => i);
+    for (let i = 1; i <= an; i++) {
+      let prev = row[0];
+      row[0] = i;
+      for (let j = 1; j <= bn; j++) {
+        const cur = row[j];
+        const add = prev + (a[i - 1] === b[j - 1] ? 0 : 1);
+        const del = row[j] + 1;
+        const sub = row[j - 1] + 1;
+        prev = cur;
+        row[j] = Math.min(add, del, sub);
+      }
+    }
+    return row[bn];
+  };
+
+  const checkAnswerByName = (name: string) => {
+    if (!name || typeof name !== 'string') return { ok: false, reason: 'invalid' };
+
+    // Disallow special characters in input (only letters, numbers and spaces)
+    if (!/^[a-zA-Z0-9\s]+$/.test(name)) return { ok: false, reason: 'invalid-chars' };
+
+    const target = randomPokemon.value?.name || '';
+
+    const normalize = (s: string) => s.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
+    const inputNorm = normalize(name);
+    const targetNorm = normalize(target);
+
+    const distance = levenshtein(inputNorm, targetNorm);
+
+    if (distance === 0) {
+      // Correct answer
+      gameStatus.value = GameStatus.Won;
+      correctAnswers.value++;
+      correctAnswerStreak.value++;
+
+      // Calculate points based on streak
+      let pointsToAdd = 10; // Base points for Extreme mode
+      if (correctAnswerStreak.value > 2) {
+        // Add bonus points for streak (1 extra point per correct answer beyond 2)
+        pointsToAdd = 10 + (correctAnswerStreak.value - 2);
+      }
+
+      score.value += pointsToAdd;
+      audioControls.playCorrectSound();
+      confetti({
+        angle: randomInRange(40, 140),
+        spread: randomInRange(80, 100),
+        particleCount: 200,
+        origin: { y: randomInRange(0.5, 1), x: randomInRange(0.3, 0.7) },
+        decay: 0.9,
+      });
+      return { ok: true, correctName: target };
+    }
+
+    // Almost correct: distance of 1
+    if (distance === 1) {
+      const halfPoints = Math.floor(10 / 2); // 5 points for almost
+      gameStatus.value = GameStatus.Won;
+      correctAnswers.value++;
+      correctAnswerStreak.value++;
+
+      score.value += halfPoints;
+      audioControls.playCorrectSound();
+      return { ok: false, almost: true, pointsAwarded: halfPoints, correctName: target };
+    }
+
+    // Wrong answer - reset streak
+    correctAnswerStreak.value = 0;
+    gameStatus.value = GameStatus.Lost;
+    lives.value--;
+    audioControls.playWrongSound();
+    if (lives.value === 0) {
+      isGameOver.value = true;
+      audioControls.playGameOverSound();
+    }
+
+    return { ok: false, reason: 'wrong', correctName: target };
+  };
+
   const setDifficulty = async (level: string) => {
     manualDifficulty.value = level;
     await resetGame();
@@ -124,6 +220,7 @@ export const usePokemonGame = () => {
     gameStatus.value = GameStatus.Playing;
     roundsPlayed.value = 0;
     correctAnswers.value = 0;
+    correctAnswerStreak.value = 0;
     lives.value = 3;
     score.value = 0;
     isGameOver.value = false;
@@ -162,9 +259,11 @@ export const usePokemonGame = () => {
     // Methods
     getNextRound,
     checkanswer,
+    checkAnswerByName,
     resetGame,
     setDifficulty,
     // Data
     pokemonOptions,
+    correctAnswerStreak,
   };
 };
