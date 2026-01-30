@@ -284,9 +284,15 @@ const {
   correctAnswerStreak,
 } = usePokemonGame();
 
+type LastResult = {
+  type: 'ok' | 'almost' | 'wrong';
+  correctName?: string;
+  points?: number;
+};
+
 const answer = ref('');
 const validationError = ref('');
-const lastResult = ref(null);
+const lastResult = ref<LastResult | null>(null);
 const animatingHeartIndex = ref<number | null>(null);
 
 const handleNextRound = () => {

@@ -2,7 +2,7 @@ import { computed, onMounted, ref } from 'vue';
 import { GameStatus, type Pokemon, type PokemonListResponse } from '../interfaces';
 import pokemonApi from '../api/pokemonApi';
 import confetti from 'canvas-confetti';
-import { useAudio } from './useAudio';
+import { useAudio } from './UseAudio';
 
 let singletonInstance: ReturnType<typeof createPokemonGame> | null = null;
 
@@ -132,15 +132,15 @@ const createPokemonGame = () => {
     const bn = b.length;
     if (an === 0) return bn;
     if (bn === 0) return an;
-    const row = new Array(bn + 1).fill(0).map((_, i) => i);
+    const row: number[] = new Array(bn + 1).fill(0).map((_, i) => i);
     for (let i = 1; i <= an; i++) {
-      let prev = row[0];
+      let prev = row[0] ?? 0;
       row[0] = i;
       for (let j = 1; j <= bn; j++) {
-        const cur = row[j];
+        const cur = row[j] ?? 0;
         const add = prev + (a[i - 1] === b[j - 1] ? 0 : 1);
-        const del = row[j] + 1;
-        const sub = row[j - 1] + 1;
+        const del = (row[j] ?? 0) + 1;
+        const sub = (row[j - 1] ?? 0) + 1;
         prev = cur;
         row[j] = Math.min(add, del, sub);
       }
