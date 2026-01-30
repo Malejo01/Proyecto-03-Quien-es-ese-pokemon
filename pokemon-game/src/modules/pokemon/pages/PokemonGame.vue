@@ -1,7 +1,20 @@
 <template>
-  <div class="flex flex-col h-screen w-screen overflow-hidden">
+  <div class="flex flex-col h-screen w-screen overflow-hidden" style="
+    background: linear-gradient(135deg, #87ceeb 0%, #90ee90 50%, #ffd700 100%);
+    position: relative;
+  ">
+    <!-- Pokemon Forest Background Pattern -->
+    <div class="absolute inset-0 opacity-20 pointer-events-none" style="
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(34, 139, 34, 0.5) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(34, 139, 34, 0.5) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(107, 142, 35, 0.4) 0%, transparent 50%);
+      background-size: 400px 400px;
+      background-position: 0 0, 100px 100px, 200px 200px;
+    "></div>
+
     <!-- Pokemon Header -->
-    <div class="bg-red-600 text-white py-4 md:py-6 px-2 md:px-4 text-center rounded shadow-lg relative">
+    <div class="bg-red-600 text-white py-4 md:py-6 px-2 md:px-4 text-center rounded shadow-lg relative z-10">
       <!-- New Game Button -->
       <button
         @click="confirmReset"
@@ -175,12 +188,12 @@
       </div>
     </div>
 
-    <section v-if="isLoading|| randomPokemon?.id == null" class="flex flex-col justify-center items-center flex-1">
+    <section v-if="isLoading|| randomPokemon?.id == null" class="flex flex-col justify-center items-center flex-1 relative z-20">
       <h2 class="text-2xl md:text-3xl font-bold mb-5 px-4 text-center">¡Bienvenido al juego Pokemon!</h2>
       <h3 class="animate-pulse text-lg md:text-xl">Cargando...</h3>
     </section>
 
-    <section v-else class="flex flex-col justify-center items-center flex-1 px-4 overflow-y-auto">
+    <section v-else class="flex flex-col justify-center items-center flex-1 px-4 overflow-y-auto relative z-20">
       <!-- Difficulty Badge -->
       <div class="mb-3 md:mb-4 px-3 md:px-4 py-1 md:py-2 rounded-lg font-bold text-sm md:text-base" :class="{
         'bg-green-200 text-green-800': difficulty === 'Easy',
@@ -280,10 +293,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import PokemonPicture from '../components/PokemonPicture.vue';
 import PokemonOptions from '../components/PokemonOptions.vue';
 import { usePokemonGame } from '../composables/UsePokemonGame';
 import { GameStatus } from '../interfaces';
+
+const router = useRouter();
 
 const showDifficultyMenu = ref(false);
 const showConfirmModal = ref(false);
@@ -364,11 +380,11 @@ const onSelectedOption = (id: number) => {
 }
 
 const confirmReset = () => {
-  if (roundsPlayed.value >= 2 && !isGameOver.value) {
-    pendingAction.value = () => resetGame();
+  if (roundsPlayed.value >= 1 && !isGameOver.value) {
+    pendingAction.value = () => router.push('/');
     showConfirmModal.value = true;
   } else {
-    resetGame();
+    router.push('/');
   }
 }
 

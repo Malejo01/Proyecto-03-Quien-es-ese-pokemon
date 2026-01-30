@@ -4,7 +4,9 @@ import pokemonApi from '../api/pokemonApi';
 import confetti from 'canvas-confetti';
 import { useAudio } from './useAudio';
 
-export const usePokemonGame = () => {
+let singletonInstance: ReturnType<typeof createPokemonGame> | null = null;
+
+const createPokemonGame = () => {
   const gameStatus = ref<GameStatus>(GameStatus.Playing);
   const pokemons = ref<Pokemon[]>([]);
   const pokemonOptions = ref<Pokemon[]>([]);
@@ -266,4 +268,11 @@ export const usePokemonGame = () => {
     pokemonOptions,
     correctAnswerStreak,
   };
+};
+
+export const usePokemonGame = () => {
+  if (!singletonInstance) {
+    singletonInstance = createPokemonGame();
+  }
+  return singletonInstance;
 };
