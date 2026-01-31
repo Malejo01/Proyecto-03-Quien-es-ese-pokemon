@@ -229,6 +229,7 @@ const createPokemonGame = () => {
     totalPokemonsLoaded.value = 151;
 
     pokemons.value = await getPokemons(151);
+    audioControls.playBackgroundMusic();
     getNextRound();
   };
 

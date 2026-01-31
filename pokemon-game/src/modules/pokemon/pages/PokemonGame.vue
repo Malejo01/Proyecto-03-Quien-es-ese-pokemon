@@ -135,6 +135,12 @@
       class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
     >
       <div class="bg-white rounded-lg p-6 md:p-8 max-w-md w-full text-center shadow-2xl">
+        <img
+          src="/img/ash-crying.png"
+          alt="Ash Crying"
+          class="w-50 h-50 object-contain mx-auto mb-4"
+          style="width: 200px; height: 200px;"
+        />
         <h2 class="text-4xl md:text-5xl font-black text-red-600 mb-3 md:mb-4">GAME OVER</h2>
         <p class="text-xl md:text-2xl mb-4 md:mb-6">Tu puntuación final:</p>
         <div class="text-5xl md:text-6xl font-bold text-blue-600 mb-6 md:mb-8">🏆 {{ score }}</div>
@@ -143,6 +149,12 @@
           class="bg-red-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-lg md:text-xl hover:bg-red-700 transition-all shadow-lg cursor-pointer"
         >
           Nuevo Juego
+        </button>
+        <button
+          @click="goToMainPage"
+          class="bg-red-600 ml-6 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-lg md:text-xl hover:bg-red-700 transition-all shadow-lg cursor-pointer"
+        >
+          Menú
         </button>
       </div>
     </div>
@@ -349,8 +361,12 @@ const confirmReset = () => {
     pendingAction.value = () => router.push('/');
     showConfirmModal.value = true;
   } else {
-    router.push('/');
+    goToMainPage();
   }
+}
+
+const goToMainPage = () =>{
+  router.push('/');
 }
 
 const confirmDifficultyChange = (newDifficulty: string) => {

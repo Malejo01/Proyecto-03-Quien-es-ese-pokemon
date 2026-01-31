@@ -1,10 +1,11 @@
 import { ref, watch } from 'vue';
 
 export const useAudio = () => {
-  const isMusicMuted = ref(false);
-  const areSoundsMuted = ref(false);
+  const isMusicMuted = ref(true);
+  const areSoundsMuted = ref(true);
   const volume = ref(50);
   const isAudioLoaded = ref(false);
+  const isPlaybackBlocked = ref(false);
 
   // Audio instances
   let backgroundMusic: HTMLAudioElement | null = null;
@@ -20,7 +21,7 @@ export const useAudio = () => {
     const bgPromise = new Promise<void>((resolve, reject) => {
       backgroundMusic = new Audio('/src/assets/audio/background/Raid-Entry.mp3');
       backgroundMusic.loop = true;
-      backgroundMusic.volume = (volume.value / 100) * 0.3; // 30% of user volume
+      backgroundMusic.volume = (volume.value / 100) * 0.5;
       backgroundMusic.addEventListener('canplaythrough', () => resolve(), { once: true });
       backgroundMusic.addEventListener('error', reject, { once: true });
       backgroundMusic.load();
@@ -63,7 +64,7 @@ export const useAudio = () => {
       console.log('All audio files loaded successfully');
     } catch (error) {
       console.error('Error loading audio files:', error);
-      isAudioLoaded.value = true; // Continue game even if audio fails
+      isAudioLoaded.value = true;
     }
   };
 
@@ -83,9 +84,15 @@ export const useAudio = () => {
     }
   });
 
-  const playBackgroundMusic = () => {
+  const playBackgroundMusic = async () => {
     if (!isMusicMuted.value && backgroundMusic) {
-      backgroundMusic.play().catch((err) => console.log('Music play failed:', err));
+      try {
+        await backgroundMusic.play();
+        isPlaybackBlocked.value = false;
+      } catch (err) {
+        console.log('Music play failed:', err);
+        isPlaybackBlocked.value = true;
+      }
     }
   };
 
@@ -128,6 +135,27 @@ export const useAudio = () => {
     gameOverSound.play().catch((err) => console.log('Game over sound play failed:', err));
   };
 
+  const enableAudioOnGesture = () => {
+    const handler = async () => {
+      try {
+        if (backgroundMusic) {
+          await backgroundMusic.play(); // browsers allow this when called from user gesture
+          backgroundMusic.pause(); // optional: don't auto-start unless you want to
+        }
+        isPlaybackBlocked.value = false;
+      } catch (e) {
+        console.log('enableAudioOnGesture failed', e);
+      } finally {
+        document.removeEventListener('click', handler);
+        document.removeEventListener('keydown', handler);
+        document.removeEventListener('touchstart', handler);
+      }
+    };
+    document.addEventListener('click', handler, { once: true });
+    document.addEventListener('keydown', handler, { once: true });
+    document.addEventListener('touchstart', handler, { once: true });
+  };
+
   return {
     isMusicMuted,
     areSoundsMuted,
@@ -141,5 +169,6 @@ export const useAudio = () => {
     playCorrectSound,
     playWrongSound,
     playGameOverSound,
+    enableAudioOnGesture,
   };
 };
